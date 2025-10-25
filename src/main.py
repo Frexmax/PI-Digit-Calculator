@@ -1,5 +1,6 @@
 """TODO."""
 
+
 def main() -> None:
     pass
 
