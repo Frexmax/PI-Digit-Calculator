@@ -1,0 +1,31 @@
+line-length = 88
+indent-width = 4
+
+# Assume Python 3.13
+target-version = "py313"
+
+# Allow fix for all rules
+lint.fixable = ["ALL"]
+lint.unfixable = []
+
+[lint.mccabe]
+max-complexity = 25
+
+[lint.pydocstyle]
+convention = "pep257"  # PEP 8 style docstrings
+
+[lint.pylint]
+max-args = 8
+max-locals = 15
+max-statements = 100
+
+[lint.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "double"
+multiline-quotes = "double"
+
+[lint.isort]
+combine-as-imports = true
+force-sort-within-sections = true
+known-first-party = []
+known-third-party = []
