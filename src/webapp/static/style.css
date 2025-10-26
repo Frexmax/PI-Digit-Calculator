@@ -2,22 +2,37 @@ body {
     background-image: url("pi-background.jpeg");
     background-repeat: no-repeat;
     background-position: center;
-    background-position-y: 20%;
-    background-size: 60%;
+    background-size: 150%;
 }
 
 #input_div {
-    position: fixed;
-    left: 19%;
-    bottom: 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 80vh;
 }
 
 #digit_input {
-    width: 300%;
+    width: 49vw;
+    margin-top: auto;
     font-size: 200%;
 }
 
 #start_calculation {
-    width: 300%;
+    margin-top: auto;
     font-size: 200%;
+}
+
+#result_div {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 80vh;
+}
+
+#result_text {
+    margin-top: auto;
+    font-size: 300%;
 }
