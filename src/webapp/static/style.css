@@ -1,0 +1,23 @@
+body {
+    background-image: url("pi-background.jpeg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-position-y: 20%;
+    background-size: 60%;
+}
+
+#input_div {
+    position: fixed;
+    left: 19%;
+    bottom: 15%;
+}
+
+#digit_input {
+    width: 300%;
+    font-size: 200%;
+}
+
+#start_calculation {
+    width: 300%;
+    font-size: 200%;
+}
