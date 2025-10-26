@@ -1,7 +1,8 @@
 """File implementing flask web app configuration."""
 from flask import Flask
 
-from .calculate_pi_page import calculate_pi_page
+from .pi_home_page import pi_home_page
+from .pi_result_page import pi_result_page
 
 
 def create_app() -> Flask:
@@ -13,6 +14,7 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "SECRET_KEY"  # noqa: S105
 
-    app.register_blueprint(calculate_pi_page, url_prefix="/")
+    app.register_blueprint(pi_home_page, url_prefix="/")
+    app.register_blueprint(pi_result_page, url_prefix="/")
 
     return app

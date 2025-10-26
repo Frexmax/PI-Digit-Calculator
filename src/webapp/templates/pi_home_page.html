@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Approximate Pi to a Digit of Your Choosing!</title>
     <link rel="stylesheet" href="../static/style.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
     <div id="input_div">
-        <form>
+        <form method="post">
             <label for="digit_input"></label>
-            <input id="digit_input" type="number" min="1" max="14"
-                   placeholder="How many digits of pi would you like to calculate (from 1 to 14)">
+            <input id="digit_input" name="digit_input" type="number" min="1" max="14"
+                   placeholder="How many digits of &#8508 would you like to calculate ?">
 
             <label for="start_calculation"></label>
             <input id="start_calculation" type="submit" value="Start Calculating!">
