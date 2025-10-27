@@ -1,10 +1,13 @@
 """File implementing the logic for calculating the digits of pi."""
 import math
 
-from src.pi_calculator.pi_calculator_constants import MAX_NUMBER_OF_DIGITS, MIN_NUMBER_OF_DIGITS
-from src.pi_calculator.pi_calculator_errors import InvalidNumberOfDigitsError
+from celery import shared_task
+
+from .pi_calculator_constants import MAX_NUMBER_OF_DIGITS, MIN_NUMBER_OF_DIGITS
+from .pi_calculator_errors import InvalidNumberOfDigitsError
 
 
+@shared_task  # type: ignore[misc]
 def get_digits_of_pi(num_digits: int) -> float:
     """
     Calculate and return the specified number of digits of pi. Limited to 15 due to floating point size.

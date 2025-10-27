@@ -5,6 +5,10 @@
     <title>The Result!</title>
     <link rel="stylesheet" href="../static/style.css">
     <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    {% if refresh_interval and refresh_interval > 0 %}
+    <meta http-equiv="refresh" content="{{ refresh_interval }}; URL={{ refresh_url }}">
+    {% endif %}
+
 </head>
 <body>
   <div id="result_div">
