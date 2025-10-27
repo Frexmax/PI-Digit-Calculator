@@ -1,6 +1,12 @@
 # ruff: noqa: PLR2004
 
 """File implementing tests for pi digit calculation logic."""
+from pathlib import Path
+import sys
+
+# Add the src directory to the Python path
+sys.path.append(str(Path(__file__).resolve().parent))
+
 import pytest
 
 from webapp.pi_calculator import InvalidNumberOfDigitsError, get_digits_of_pi
