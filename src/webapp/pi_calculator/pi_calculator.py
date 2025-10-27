@@ -2,8 +2,9 @@
 import math
 
 from celery import shared_task
-from pi_calculator.pi_calculator_constants import MAX_NUMBER_OF_DIGITS, MIN_NUMBER_OF_DIGITS
-from pi_calculator.pi_calculator_errors import InvalidNumberOfDigitsError
+
+from .pi_calculator_constants import MAX_NUMBER_OF_DIGITS, MIN_NUMBER_OF_DIGITS
+from .pi_calculator_errors import InvalidNumberOfDigitsError
 
 
 @shared_task  # type: ignore[misc]

@@ -3,8 +3,7 @@
 """File implementing tests for pi digit calculation logic."""
 import pytest
 
-from src.webapp.pi_calculator import get_digits_of_pi
-from src.webapp.pi_calculator import InvalidNumberOfDigitsError
+from webapp.pi_calculator import InvalidNumberOfDigitsError, get_digits_of_pi
 
 
 def test_get_digits_of_pi_invalid_number_of_digits() -> None:

@@ -1,41 +1,37 @@
-"""TODO."""
-import threading  # noqa: I001
+"""File implementing the result page endpoint of the pi calculator."""
 from pathlib import Path
 import sys
-from typing import Optional
 
 # Add the src directory to the Python path
 sys.path.append(str(Path(__file__).resolve().parent))
 
 from celery.result import AsyncResult
-from flask import Blueprint, jsonify, render_template, request, url_for
-from pi_calculator import get_digits_of_pi
+from flask import Blueprint, Response, jsonify, render_template, request, url_for
+
+from .pi_calculator import get_digits_of_pi
 
 pi_result_page = Blueprint("pi_result_page", __name__)
 
-# track the last created task id (process-wide)
-# last_task_id: Optional[str] = None
-# _last_task_lock = threading.Lock()
 
 @pi_result_page.route("/calculate_pi", methods=["GET"])
 def result_page() -> str:
     """
-    Single endpoint to start and poll the Celery task.
-    - If no `task_id` query param: start a task and render "calculating..." with a meta-refresh
-      back to the same endpoint including `task_id` and `n`.
-    - If `task_id` is present: check the task. If ready render final result, otherwise re-render
-      "calculating..." with a meta-refresh back to this endpoint.
+    Start a new celery task to calculate digits of pi according to 'n' provided in url parameters
+    or polls an existing task if one is provided in the url parameters.
+
+    :return: rendered html page with the final result or a placeholder indicating calculation in progress
     """  # noqa: D205
-    # robust parsing of n
+    # read number of digits from url parameters -> if invalid default to 1
     try:
         num_digits = int(request.args.get("n", "1"))
     except (TypeError, ValueError):
         num_digits = 1
 
+    # get task_id from url parameters -> if missing start a new task
     task_id = request.args.get("task_id")
 
-    # Start a new task when no task_id is provided
     if not task_id:
+        #  if no task present -> start a new task
         task = get_digits_of_pi.delay(num_digits)
         poll_url = url_for(".result_page", task_id=task.id, n=num_digits)
         return render_template(
@@ -47,17 +43,16 @@ def result_page() -> str:
             refresh_url=poll_url,
         )
 
-    # Poll an existing task
+    # if task present -> poll the existing task
     task = AsyncResult(task_id)
     if task.ready():
+        # if task finished -> get the result and render it
         try:
             final = task.get(timeout=1)
             if num_digits == 1:
-                try:
-                    final = int(final)
-                except Exception:
-                    pass
-        except Exception as exc:
+                # if only 1 digit requested -> convert to int to avoid trailing .0
+                final = int(final)
+        except Exception as exc:  # noqa: BLE001 # need to catch Exception since task.get raises it
             final = f"Error: {exc}"
 
         return render_template(
@@ -69,12 +64,12 @@ def result_page() -> str:
             refresh_url="",
         )
 
-    # Still running -> re-render calculating page that refreshes to this endpoint
+    # still running -> re-render calculating page that refreshes to this endpoint
     poll_url = url_for(".result_page", task_id=task_id, n=num_digits)
     return render_template(
         "result_page.html",
         num_digits=num_digits,
-        result="calculating...",
+        result="...",
         task_id=task_id,
         refresh_interval=0.5,
         refresh_url=poll_url,
@@ -82,25 +77,27 @@ def result_page() -> str:
 
 
 @pi_result_page.route("/check_progress", methods=["GET"])
-def check_progress():
+def check_progress() -> tuple[Response, int]:
     """
-    Return JSON with the Celery task state and result (when ready).
-    Query params:
-      - task_id: required Celery task id
-    Example: GET /check_progress?task_id=<id>
-    """  # noqa: D400
+    Check the progress of an existing celery task provided in the url parameters.
+
+    :return: HTTP response with json payload containing the task state and result (if ready)
+    """
     task_id = request.args.get("task_id")
     if not task_id:
+        # missing task_id in url parameters -> bad request (can't check progress for non existing task)
         return jsonify({"error": "missing task_id"}), 400
 
+    # get the task status
     task = AsyncResult(task_id)
     payload = {"state": task.state}
 
     if task.ready():
+        # if task is ready -> try to get the result
         try:
             payload["result"] = task.get(timeout=1)
-        except Exception as exc:
+        except Exception as exc: # noqa: BLE001 # need to catch Exception since task.get raises it
             payload["result"] = None
             payload["error"] = str(exc)
 
-    return jsonify(payload)
+    return jsonify(payload), 200

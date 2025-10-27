@@ -22,3 +22,5 @@ def create_app() -> Flask:
     app.register_blueprint(pi_result_page, url_prefix="/")
 
     return app
+
+__all__ = ["create_app"]
