@@ -1,5 +1,5 @@
 # PI-Digit-Calculator
-App to calculate digits of pi using Celery - project for the JetBrains PostTagger Reimagined internship application
+App to calculate digits of Pi using Flask Celery - project for the JetBrains PostTagger Reimagined internship application
 
 ![Application Result Page](imgs/application_example.png)
 
