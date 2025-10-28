@@ -55,6 +55,7 @@ Notes:
   - `progress`: how much of the task has been completed (from 0 - none to 1.0 - done) (float).
   - `result`: the result of the computation (float - or null if computation isn't finished yet).
 - Implemented in: `src/webapp/pi_result_page.py` 
+
 Example:
 - Request: `GET /check_progress?task_id=c446ef04-49a9-4fa5-a192-f3e7215e9369`
 - Response: `200 OK` with JSON content {`state`: FINISHED, `progress`: 1.0, `result`: 3.14}.
