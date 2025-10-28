@@ -28,13 +28,15 @@ def get_digits_of_pi(self: Any, num_digits: int) -> dict[str, str | int]:
         msg = f"Variable 'num_digits' must be less than {MAX_NUMBER_OF_DIGITS}"
         raise InvalidNumberOfDigitsError(msg)
 
+    # number of terms (iterations) needed is around n / 14
     number_of_iterations = num_digits // 14 + 1
 
     total = Decimal(0)
     k = 0
 
-    # Number of terms needed is roughly n / 14
     self.update_state(state="PROGRESS", meta={"current": 0, "total": number_of_iterations})
+
+    # run the chudnovsky algorithm to calculate digits
     while k < number_of_iterations:
         total += chudnovsky_term(k)
         k += 1
