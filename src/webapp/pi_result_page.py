@@ -8,7 +8,7 @@ sys.path.append(str(Path(__file__).resolve().parent))
 from celery.result import AsyncResult
 from flask import Blueprint, Response, jsonify, render_template, request, url_for
 
-from .pi_calculator import get_digits_of_pi
+from .pi_calculator import MAX_NUMBER_OF_DIGITS, get_digits_of_pi
 
 pi_result_page = Blueprint("pi_result_page", __name__)
 
@@ -24,6 +24,8 @@ def result_page() -> str:
     # read number of digits from url parameters -> if invalid default to 1
     try:
         num_digits = int(request.args.get("n", "1"))
+        if num_digits < 1 or num_digits > MAX_NUMBER_OF_DIGITS:
+            num_digits = 1
     except (TypeError, ValueError):
         num_digits = 1
 
