@@ -19,7 +19,8 @@ exclude = [
 ]
 
 lint.ignore = [
-    "S101"
+    "S101",
+    "ANN401"
 ]
 
 # Allow fix for all rules

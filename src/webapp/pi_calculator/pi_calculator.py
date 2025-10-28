@@ -1,5 +1,6 @@
 """File implementing the logic for calculating the digits of pi."""
 import math
+from typing import Any
 
 from celery import shared_task
 
@@ -7,11 +8,12 @@ from .pi_calculator_constants import MAX_NUMBER_OF_DIGITS, MIN_NUMBER_OF_DIGITS
 from .pi_calculator_errors import InvalidNumberOfDigitsError
 
 
-@shared_task  # type: ignore[misc]
-def get_digits_of_pi(num_digits: int) -> float:
+@shared_task(bind=True)  # type: ignore[misc]
+def get_digits_of_pi(self: Any, num_digits: int) -> dict[str, float | int]:
     """
     Calculate and return the specified number of digits of pi. Limited to 15 due to floating point size.
 
+    :param self: the task instance
     :param num_digits: how many digits of pi to return
     :return: 'num_digits' digits of pi
     """
@@ -30,7 +32,7 @@ def get_digits_of_pi(num_digits: int) -> float:
     iterations = math.ceil(num_digits / digits_per_iterations)
 
     # calculate the digits of pi
-    pi_approximate = chudnovsky(iterations)
+    pi_approximate = chudnovsky(self, iterations)
 
     # get the necessary number of digits - need +2 elements, because it includes the decimal point '.'
     pi_approximate_str = str(pi_approximate)
@@ -39,24 +41,26 @@ def get_digits_of_pi(num_digits: int) -> float:
     # if someone requested one digit, then there would be the decimal point at the end -> remove it
     if pi_approximate_str[-1] == ".":
         pi_approximate_str = pi_approximate_str[:-1]
+    pi_approximate = float(pi_approximate_str)
+    return {"result": pi_approximate, "current": iterations, "total": iterations}
 
-    return float(pi_approximate_str)
 
-
-def chudnovsky(iterations: int) -> float:
+def chudnovsky(self: Any, iterations: int) -> float:
     """
     Implement the chudnovsky algorithm to calculate the digits of pi.
 
+    :param self: the task instance
     :param iterations: number of iterations to run the algorithm for
     :return: the approximation of pi
     """
-    c = 426880 * math.sqrt(10005)
+    self.update_state(state="PROGRESS", meta={"current": 0, "total": iterations})
 
+    c = 426880 * math.sqrt(10005)
     pi_sum = 0
     for q in range(iterations):
         mq = math.factorial(6 * q) / (math.factorial(3 * q) * math.factorial(q) ** 3)
         lq = 545140 * q + 13591409
         xq = (-262537412640768000) ** q
         pi_sum += (mq * lq) / xq
-
+        self.update_state(state="PROGRESS", meta={"current": q, "total": iterations})
     return c * (1 / pi_sum)
