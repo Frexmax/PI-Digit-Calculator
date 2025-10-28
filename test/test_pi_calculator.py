@@ -1,5 +1,3 @@
-# ruff: noqa: PLR2004
-
 """File implementing tests for pi digit calculation logic."""
 from pathlib import Path
 import sys
