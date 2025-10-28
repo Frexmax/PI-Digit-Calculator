@@ -1,9 +1,14 @@
 TODO LIST:
-1. Add fav icon - DONE
-2. Add celery task queue
-3. Connect Pi calculation function with HTML output - DONE
-4. Add test to flask web app
-5. Do input verification on url parameter
-6. Clean up imports (remove extra path additions or something ...)
+- Add celery task queue
+- Add test to flask web app
+- Do input verification on url parameter
+- Add progress bar
+- Add API docs
+- Change PI calculation to calculate more digits
+
+- Clean up imports (remove extra path additions or something ...) - DONE
+- Dockerize the application - DONE
+- Add fav icon - DONE
+- Connect Pi calculation function with HTML output - DONE
 
 1. Use flask to create a web application

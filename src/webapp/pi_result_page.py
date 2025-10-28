@@ -2,7 +2,7 @@
 from pathlib import Path
 import sys
 
-# Add the src directory to the Python path
+# add the src directory to the Python path
 sys.path.append(str(Path(__file__).resolve().parent))
 
 from celery.result import AsyncResult
@@ -37,7 +37,7 @@ def result_page() -> str:
         return render_template(
             "result_page.html",
             num_digits=num_digits,
-            result="calculating...",
+            result="...",
             task_id=task.id,
             refresh_interval=2,
             refresh_url=poll_url,
@@ -48,7 +48,7 @@ def result_page() -> str:
     if task.ready():
         # if task finished -> get the result and render it
         try:
-            final = task.get(timeout=1)
+            final = task.info.get("result")
             if num_digits == 1:
                 # if only 1 digit requested -> convert to int to avoid trailing .0
                 final = int(final)
@@ -71,7 +71,7 @@ def result_page() -> str:
         num_digits=num_digits,
         result="...",
         task_id=task_id,
-        refresh_interval=0.5,
+        refresh_interval=1,
         refresh_url=poll_url,
     )
 
@@ -90,14 +90,32 @@ def check_progress() -> tuple[Response, int]:
 
     # get the task status
     task = AsyncResult(task_id)
-    payload = {"state": task.state}
+    payload = {}
+    match task.state:
+        case "PENDING":
+            payload["state"] = "PROGRESS"
+        case "SUCCESS":
+            payload["state"] = "FINISHED"
+        case _:
+            payload["state"] = task.state
+
+    # try to extract progress/meta published by ProgressRecorder / update_state
+    info = task.info
+    if isinstance(info, dict):
+        current = info.get("current")
+        total = info.get("total")
+        if current is not None and total is not None:
+            payload["progress"] = current / total
+        else:
+            payload["progress"] = None # type: ignore[assignment]
 
     if task.ready():
         # if task is ready -> try to get the result
         try:
-            payload["result"] = task.get(timeout=1)
+            payload["result"] = task.info.get("result")
         except Exception as exc: # noqa: BLE001 # need to catch Exception since task.get raises it
-            payload["result"] = None
+            payload["result"] = None  # type: ignore[assignment]
             payload["error"] = str(exc)
-
+    else:
+        payload["result"] = None # type: ignore[assignment]
     return jsonify(payload), 200

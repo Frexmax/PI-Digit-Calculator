@@ -33,14 +33,14 @@ def test_get_digits_of_pi_invalid_number_of_digits() -> None:
 
 def test_valid_get_digits_of_pi() -> None:
     """Test the correct calculation for the digits of pi by the 'get_digits_of_pi' method."""
-    pi = get_digits_of_pi(1)
+    pi = get_digits_of_pi(1).get("result")
     assert pi == 3
 
-    pi = get_digits_of_pi(3)
+    pi = get_digits_of_pi(3).get("result")
     assert pi == 3.14
 
-    pi = get_digits_of_pi(10)
+    pi = get_digits_of_pi(10).get("result")
     assert pi == 3.141592653
 
-    pi = get_digits_of_pi(14)
+    pi = get_digits_of_pi(14).get("result")
     assert pi == 3.1415926535897
