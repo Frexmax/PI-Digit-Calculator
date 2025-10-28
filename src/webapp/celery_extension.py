@@ -1,10 +1,14 @@
-"""TODO."""
+"""File implementing Celery configuration."""
 from celery import Celery, Task
 from flask import Flask
 
 
 def celery_init_app(app: Flask) -> Celery:
-    """TODO."""
+    """
+    Configure Celery app with Flask app context.
+
+    :return: celery app
+    """
     class FlaskTask(Task):  # type: ignore[misc]
         def __call__(self, *args: object, **kwargs: object) -> object:
             with app.app_context():
