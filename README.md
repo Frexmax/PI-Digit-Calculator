@@ -38,7 +38,7 @@ Example:
 ### GET `/calculate_pi` — Do the PI calculation
 - Purpose: Enqueue a Celery task to compute digits of Pi with requested parameters.
 - Query parameters:
-  - `n` (integer) — number of digits to compute.
+  - `n` (integer) — number of digits to compute (limited to between 1 and 50 (inclusive))
 - Response (JSON):
   - HTML page (renders the result of the computation or '...' if the computation isn't finished yet).
 - Implemented in: `src/webapp/pi_result_page.py` 
